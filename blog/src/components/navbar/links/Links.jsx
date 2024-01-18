@@ -1,35 +1,64 @@
-import styles from "./links.module.css";
-import Link from "next/link";
+"use client"
 
+import styles from "./links.module.css";
+import NavLink from "./navLink/navLink";
+import { useState } from "react";
+
+const links = [
+  {
+    title: "Home",
+    path: "/",
+  },
+  {
+    title: "About",
+    path: "/about",
+  },
+  {
+    title: "Contact",
+    path: "/contact",
+  },
+  {
+    title: "Blog",
+    path: "/blog",
+  },
+];
 
 const Links = () => {
+  const [open, setOpen] = useState(false);
 
-  const links = [
-      {
-          title: "Home",
-          path : "/",
-      },
-      {
-          title: "About",
-          path : "/about",
-      },
-      {
-          title: "Contact",
-          path : "/contact",
-      },
-      {
-          title: "Blog",
-          path : "/blog",
-      },
-  ]  
+  // TEMPORARY
+  const session = true;
+  const isAdmin = true;
 
   return (
-    <div className={styles.links}>
-        {links.map((link)=>(
-            <Link key={link.title} href={link.path}>{link.title}</Link>
+    <div className={styles.container}>
+        <div className={styles.links}>
+        {links.map((link) => (
+            <NavLink item={link} key={link.title} />
         ))}
-    </div>
-  )
-}
+        {session ? (
+            <>
+            {isAdmin && <NavLink item={{ title: "Admin", path: "/admin" }} />}
+            <button className={styles.logout}>Logout</button>
+            </>
+        ) : (
+            <NavLink item={{ title: "Login", path: "/login" }} />
+        )}
+        </div>
+        <button className={styles.menuBtn} onClick={()=>setOpen((prev)=>!prev)}>Menu</button>
+        {
+            open && (
+                <div className={styles.mobileLinks}>
+                    {
+                        links.map((link)=>(
+                            <NavLink item={link} key={link.title} />
+                        ))
+                    }
+                </div>
+            )
+        }
+    </div>  
+  );
+};
 
-export default Links
+export default Links;
