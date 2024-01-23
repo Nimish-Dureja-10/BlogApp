@@ -24,6 +24,11 @@
         display: block;
         cursor: pointer;
         font-style: 30px;
+        background: none;
+        color:var(--text);
+        padding: 5px;
+        font-size: 24px;
+        border: none;
     }
 
     .mobileLinks {
