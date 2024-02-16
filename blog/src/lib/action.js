@@ -1,6 +1,6 @@
 "use server";
 import { signIn, signOut } from "./auth";
-import { User } from "./models";
+import { Post, User } from "./models";
 import { connectDB } from "./utils";
 import bcrypt from 'bcrypt';
 
@@ -51,5 +51,72 @@ export const login = async (previousState,formData) => {
       return {error : "Wrong Credentials"};
     }
     throw err;
+  }
+};
+
+export const addUser = async (previousState,formData) => {
+  const {username,email,password,img} = Object.fromEntries(formData);
+  try{
+    connectDB();
+    const newUser = new User({
+      username,
+      email,
+      password,
+      img
+    });
+    await newUser.save();
+    console.log("Post added successfully");
+    revalidatePath("/admin")
+  }catch(err) {
+    console.log(err);
+    return {error:"Failed to add post!"}
+  }
+}
+
+export const deleteUser = async (formData) => {
+  const {id} = Object.fromEntries(formData);
+  try{
+    connectDB();
+    await Post.deleteMany({userId:id});
+    await User.findByIdAndDelete(id);
+    console.log("User deleted successfully");
+    // return {success:true};
+    revalidatePath("/admin");
+  }catch(err) {
+    console.log(err);
+    return {error : "Failed to delete user"};
+  }
+};
+
+export const addPost = async (previousState,formData) => {
+  const {title,desc,slug,userId} = Object.fromEntries(formData);
+  try{
+    connectDB();
+    const newPost = new Post({
+      title,
+      desc,
+      slug,
+      userId
+    });
+    await newPost.save();
+    console.log("Post added successfully");
+    revalidatePath("/admin")
+  }catch(err) {
+    console.log(err);
+    return {error:"Failed to add post!"}
+  }
+}
+
+export const deletePost = async (formData) => {
+  const {id} = Object.fromEntries(formData);
+  try{
+    connectDB();
+    await Post.findByIdAndDelete(id);
+    console.log("Post deleted successfully");
+    // return {success:true};
+    revalidatePath("/admin");
+  }catch(err) {
+    console.log(err);
+    return {error : "Failed to delete user"};
   }
 }
